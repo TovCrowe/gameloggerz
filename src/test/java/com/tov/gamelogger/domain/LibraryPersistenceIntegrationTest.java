@@ -45,7 +45,7 @@ class LibraryPersistenceIntegrationTest {
 
     @Test
     void persistsLibraryEntryAndRejectsDuplicateUserGamePair() {
-        User user = userRepository.saveAndFlush(new User("alice"));
+        User user = userRepository.saveAndFlush(new User("alice@example.com", "irrelevant-hash"));
         Game game = gameRepository.saveAndFlush(new Game("steam:70", "Half-Life"));
         libraryEntryRepository.saveAndFlush(new LibraryEntry(user, game));
 
@@ -56,7 +56,7 @@ class LibraryPersistenceIntegrationTest {
 
     @Test
     void roundTripsUserGameAndLibraryEntry() {
-        User user = userRepository.saveAndFlush(new User("bob"));
+        User user = userRepository.saveAndFlush(new User("bob@example.com", "irrelevant-hash"));
         Game game = gameRepository.saveAndFlush(new Game("steam:400", "Portal"));
         game.getGenres().add("puzzle");
         game.getTags().add("singleplayer");
@@ -67,7 +67,7 @@ class LibraryPersistenceIntegrationTest {
         LibraryEntry saved = libraryEntryRepository.saveAndFlush(entry);
 
         LibraryEntry reloaded = libraryEntryRepository.findById(saved.getId()).orElseThrow();
-        assertThat(reloaded.getUser().getUsername()).isEqualTo("bob");
+        assertThat(reloaded.getUser().getEmail()).isEqualTo("bob@example.com");
         assertThat(reloaded.getGame().getExternalId()).isEqualTo("steam:400");
         assertThat(reloaded.getGame().getGenres()).containsExactly("puzzle");
         assertThat(reloaded.getStatus()).isEqualTo(LibraryStatus.BACKLOG);

@@ -23,8 +23,11 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "username", nullable = false, unique = true, length = 64)
-    private String username;
+    @Column(name = "email", nullable = false, unique = true, length = 254)
+    private String email;
+
+    @Column(name = "password_hash", nullable = false)
+    private String passwordHash;
 
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
@@ -37,20 +40,29 @@ public class User {
     protected User() {
     }
 
-    public User(String username) {
-        this.username = username;
+    public User(String email, String passwordHash) {
+        this.email = email;
+        this.passwordHash = passwordHash;
     }
 
     public Long getId() {
         return id;
     }
 
-    public String getUsername() {
-        return username;
+    public String getEmail() {
+        return email;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPasswordHash() {
+        return passwordHash;
+    }
+
+    public void setPasswordHash(String passwordHash) {
+        this.passwordHash = passwordHash;
     }
 
     public Instant getCreatedAt() {
