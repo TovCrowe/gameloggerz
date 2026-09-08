@@ -2,12 +2,15 @@ package com.tov.gamelogger.web;
 
 import com.tov.gamelogger.auth.EmailAlreadyInUseException;
 import com.tov.gamelogger.auth.InvalidCredentialsException;
+import com.tov.gamelogger.games.RawgUnavailableException;
 import com.tov.gamelogger.security.InvalidTokenException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.HandlerMethodValidationException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -25,5 +28,16 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleValidation(MethodArgumentNotValidException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("Validation failed"));
+    }
+
+    @ExceptionHandler({MissingServletRequestParameterException.class, HandlerMethodValidationException.class})
+    public ResponseEntity<ErrorResponse> handleMissingOrInvalidParam(Exception ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("Validation failed"));
+    }
+
+    @ExceptionHandler(RawgUnavailableException.class)
+    public ResponseEntity<ErrorResponse> handleRawgUnavailable(RawgUnavailableException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_GATEWAY)
+                .body(new ErrorResponse("Unable to reach the game search service. Please try again later."));
     }
 }
